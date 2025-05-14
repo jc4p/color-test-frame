@@ -233,14 +233,7 @@
 
 /* --- True Color Specific Styles --- */
 
-/* Default (Fallback) Theme Variables */
-:root {
-  --primary-color: #78909C; /* Default Slate Grey */
-  --primary-color-light: #CFD8DC;
-  --primary-color-text: #FFFFFF;
-  --primary-color-dark: #546E7A;
-  --primary-color-pfp-border: #78909C;
-}
+/* Default (Fallback) Theme Variables moved to globals.css */
 
 /* Orange Theme */
 .orange {
