@@ -1,294 +1,31 @@
+/* General Container & Page Styles */
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Keep content towards top */
-  min-height: auto; /* Remove fixed min-height */
-  text-align: center;
-  padding: 1.5rem 1rem 3rem 1rem; /* Reduced top padding */
-  width: 100%;
-  gap: 1.5rem; /* Adjusted gap */
+  padding: 20px;
+  max-width: 700px;
+  margin: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
 }
 
-.placeholder {
-  color: #ccc;
-}
-
-.highlight {
-  color: #0070f3; /* Example highlight color */
-  font-weight: bold;
-}
-
-.error {
-  color: #ff4d4f;
-  font-weight: bold;
-}
-
-.errorMessage {
-  color: #ff4d4f;
-  margin-top: 1rem;
-  background-color: rgba(255, 77, 79, 0.1);
-  padding: 0.8rem;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 77, 79, 0.2);
-}
-
-.pfpContainer {
-  margin-bottom: 1rem; /* Slightly reduce space below PFP */
-}
-
-.pfpImage {
-  border-radius: 50%;
-  border: 4px solid #eee; /* Thicker border */
-  transition: border-color 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
-}
-
-.userNameHighlight {
-    font-weight: 600; /* Make slightly bolder */
-    color: #333;
-}
-
-.title {
-    margin-bottom: 1.5rem; /* Reduce space below title */
-    font-size: 1.7rem; /* Slightly smaller */
-    width: 100%;
-    text-align: center;
-    color: #222; /* Darker title color */
-}
-
-.resultsContainer {
-    margin-top: 0; /* Remove top margin as header handles spacing */
-    padding: 1.5rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 550px;
-    text-align: left;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.resultTitle {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.6rem;
-    color: #333;
-    font-weight: 600;
-}
-
-.summary {
-    font-style: normal; /* Remove italic */
-    color: #444; /* Darker summary text */
-    margin-bottom: 2rem; /* More space below summary */
-    text-align: center;
-    line-height: 1.6;
-    font-size: 1.05rem;
-}
-
-.percentagesContainer {
-    margin-bottom: 0; /* Remove bottom margin when in grid */
-}
-
-.percentagesContainer h3 {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: #555;
-    text-align: left; /* Align left */
-}
-
-.percentagesContainer ul {
-    list-style: none;
-    padding: 0;
-}
-
-.percentagesContainer li {
-    margin-bottom: 0.6rem;
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    font-weight: 500;
-    border: 1px solid transparent;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    display: flex; /* Align icon and text */
-    align-items: center;
-}
-
-.houseIcon {
-    margin-right: 0.6em;
-    font-size: 1.1em;
-    display: inline-block;
-    width: 1.2em; /* Ensure consistent alignment */
-    text-align: center;
-}
-
-.evidenceContainer {
-    margin-bottom: 0; /* Remove bottom margin when in grid */
-}
-
-.evidenceContainer h3 {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: #555;
-    text-align: left;
-}
-
-.evidenceItem {
-    background-color: #fdfdfd;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 1.2rem;
-    margin-bottom: 1.2rem;
-}
-
-.traitTitle {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    color: #111;
-    font-size: 1.05rem;
-    font-weight: 600; /* Bolder trait title */
-}
-
-.evidenceItem blockquote {
-    margin: 0 0 0.75rem 0;
-    padding-left: 1rem;
-    border-left: 3px solid #ccc;
-    font-style: italic;
-    color: #555;
-}
-
-.evidenceItem blockquote p {
-    margin: 0.25rem 0;
-    font-size: 0.95rem;
-}
-
-.explanation {
-    font-size: 0.95rem;
-    color: #333;
-    line-height: 1.5;
-}
-
-/* New Why Not Section Styles */
-.whyNotContainer {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-}
-
-.whyNotContainer h3 {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: #555;
-    text-align: center;
-}
-
-.whyNotItem {
-    margin-bottom: 1rem;
-    padding: 0.8rem;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.whyNotItem strong {
-    font-weight: 600;
-    display: inline-flex; /* Align icon */
-    align-items: center;
-    margin-right: 0.3em;
-}
-
-/* Share Button Styles */
-.shareButton {
-    margin-top: 0; /* REMOVED top margin */
-    margin-bottom: 1rem; /* Add some bottom margin instead */
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    background-color: #0070f3;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.shareButton:hover {
-    background-color: #005bb5;
-}
-
-.shareButton:active {
-    transform: scale(0.98);
-}
-
-.shareButton:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-/* House specific styles */
-.gryffindor {
-  color: #ae0001;
-  border-color: #d3a625;
-  background-color: rgba(174, 0, 1, 0.05);
-}
-.slytherin {
-  color: #1a472a;
-  border-color: #aaaaaa;
-  background-color: rgba(26, 71, 42, 0.05);
-}
-.hufflepuff {
-  color: #ffdb00; /* Use a darker text for background */
-  border-color: #60605f;
-  background-color: rgba(255, 219, 0, 0.1);
-  color: #372e29; /* Darker text on yellow background */
-}
-.ravenclaw {
-  color: #0e1a40;
-  border-color: #946b2d;
-  background-color: rgba(14, 26, 64, 0.05);
-}
-
-/* Apply border color to PFP based on house */
-.pfpImage.gryffindor { border-color: #ae0001; }
-.pfpImage.slytherin { border-color: #1a472a; }
-.pfpImage.hufflepuff { border-color: #ffdb00; }
-.pfpImage.ravenclaw { border-color: #0e1a40; }
-
-/* Highlight color for primary house name */
-.highlight {
-  font-weight: bold;
-  padding: 0.1em 0.3em;
-  border-radius: 4px;
-}
-
-.highlight.gryffindor { background-color: #ae0001; color: white; }
-.highlight.slytherin { background-color: #1a472a; color: white; }
-.highlight.hufflepuff { background-color: #ffdb00; color: #372e29; }
-.highlight.ravenclaw { background-color: #0e1a40; color: white; }
-
-/* Loading Spinner Styles */
 .loadingContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem; /* More padding */
-  min-height: 300px; /* Give it more space */
+  min-height: 200px;
+  text-align: center;
 }
 
 .spinner {
-  border: 5px solid rgba(0, 0, 0, 0.1);
+  border: 6px solid #f3f3f3;
+  /* Uses --primary-color for the moving part of the spinner */
+  border-top: 6px solid var(--primary-color, #3498db); 
+  border-radius: 50%;
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  border-left-color: #0070f3; /* Use theme color */
-  margin-bottom: 1.5rem;
-  animation: spin 1s linear infinite; /* Changed timing function */
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
 }
 
 @keyframes spin {
@@ -297,83 +34,336 @@
 }
 
 .loadingText {
-  font-size: 1.1rem;
+  font-size: 1.1em;
   color: #555;
 }
 
-/* Error Styles */
 .errorTitle {
-    color: #d32f2f; /* Error color */
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+  color: #D32F2F; /* A stronger red for errors */
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
-/* New Header Styles */
+.errorMessage {
+  background-color: #FFEBEE; /* Light red background for error message */
+  color: #D32F2F;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #FFCDD2;
+  text-align: center;
+}
+
+/* Header Styles */
 .headerContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem; /* Space below header */
-    width: 100%;
-    max-width: 550px; /* Match results container */
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  width: 100%;
 }
 
-.pfpContainerSmall { 
-    flex-shrink: 0; /* Prevent shrinking */
+.pfpContainerSmall {
+  margin-right: 15px;
+  flex-shrink: 0;
 }
 
 .pfpImageSmall {
   border-radius: 50%;
-  border: 3px solid #eee;
-  transition: border-color 0.3s ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  /* Uses --primary-color-pfp-border for the border */
+  border: 4px solid var(--primary-color-pfp-border, #ddd); 
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .titleSmall {
-    font-size: 1.4rem;
-    text-align: left;
-    color: #333;
-    font-weight: 500; /* Less emphasis than results */
-    line-height: 1.4;
-    margin: 0;
+  font-size: 1.4em; 
+  font-weight: 600;
+  color: #2c3e50;
+  line-height: 1.3;
 }
 
-/* Media Query for Mobile Spacing */
+.userNameHighlight {
+  font-weight: 700;
+  /* Uses --primary-color for the text color */
+  color: var(--primary-color, #3498db); 
+}
+
+/* Share Button */
+.shareButton {
+  display: inline-flex; 
+  align-items: center;
+  /* Uses --primary-color for background */
+  background-color: var(--primary-color, #555);
+  color: var(--primary-color-text, #FFFFFF); /* Text color from variable */
+  border: none;
+  padding: 10px 18px;
+  font-size: 1em;
+  font-weight: 500;
+  border-radius: 20px; 
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.shareButton:hover:not(:disabled) {
+  /* Uses --primary-color-dark for hover background */
+  background-color: var(--primary-color-dark, #333); 
+  transform: translateY(-1px);
+}
+
+.shareButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  color: #666;
+}
+
+.shareButton span[role="img"] {
+  margin-right: 8px;
+  font-size: 1.1em;
+}
+
+/* Results Area */
+.resultsContainer {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.resultTitle {
+  font-size: 1.8em;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.resultTitle .highlight {
+  padding: 5px 12px;
+  border-radius: 8px;
+  /* Background and text color set by specific color classes (.highlight.orange etc.) */
+}
+
+.summary {
+  font-size: 1.1em;
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #444;
+  border: 1px solid #efefef;
+}
+
+/* Details Grid & Card-like Sections */
+.detailsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Space between cards */
+}
+
+.stereotypesContainer,
+.affinitiesContainer {
+  background-color: #ffffff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e0e0e0;
+}
+
+.stereotypesContainer h3,
+.affinitiesContainer h3 {
+  font-size: 1.3em;
+  font-weight: 600;
+  /* Uses --primary-color for the heading text color */
+  color: var(--primary-color, #2c3e50); 
+  margin-top: 0;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.stereotypesContainer ul,
+.affinitiesContainer ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.stereotypesContainer li {
+  margin-bottom: 12px;
+  padding-left: 25px; 
+  position: relative;
+  font-size: 1em;
+  color: #455A64; 
+}
+
+.stereotypesContainer li::before {
+  content: '◆'; 
+  position: absolute;
+  left: 0;
+  top: 1px; 
+  font-size: 1.1em;
+  /* Uses --primary-color for the bullet */
+  color: var(--primary-color, #3498db); 
+}
+
+.stereotypesContainer li strong {
+  font-weight: 600;
+  color: #37474F; 
+}
+
+/* Affinities List Specific Styling */
+.affinitiesContainer li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Specific background/color set by .affinitiesContainer .orange etc. */
+}
+
+.affinitiesContainer li:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* --- True Color Specific Styles --- */
+
+/* Default (Fallback) Theme Variables */
+:root {
+  --primary-color: #78909C; /* Default Slate Grey */
+  --primary-color-light: #CFD8DC;
+  --primary-color-text: #FFFFFF;
+  --primary-color-dark: #546E7A;
+  --primary-color-pfp-border: #78909C;
+}
+
+/* Orange Theme */
+.orange {
+  --primary-color: #FF7043; /* Deep Orange */
+  --primary-color-light: #FFAB91; /* Lighter Orange for backgrounds */
+  --primary-color-text: #FFFFFF;
+  --primary-color-dark: #E64A19; /* Darker Orange for hover */
+  --primary-color-pfp-border: #FF7043;
+}
+.resultTitle .highlight.orange { background-color: var(--primary-color); color: var(--primary-color-text); }
+.affinitiesContainer li.orange { background-color: var(--primary-color-light); color: #BF360C; /* Dark text on light orange */ }
+
+/* Blue Theme */
+.blue {
+  --primary-color: #42A5F5; /* Blue */
+  --primary-color-light: #90CAF9; /* Lighter Blue */
+  --primary-color-text: #FFFFFF;
+  --primary-color-dark: #1E88E5; /* Darker Blue */
+  --primary-color-pfp-border: #42A5F5;
+}
+.resultTitle .highlight.blue { background-color: var(--primary-color); color: var(--primary-color-text); }
+.affinitiesContainer li.blue { background-color: var(--primary-color-light); color: #0D47A1; /* Dark text on light blue */ }
+
+/* Green Theme */
+.green {
+  --primary-color: #66BB6A; /* Green */
+  --primary-color-light: #A5D6A7; /* Lighter Green */
+  --primary-color-text: #FFFFFF;
+  --primary-color-dark: #388E3C; /* Darker Green */
+  --primary-color-pfp-border: #66BB6A;
+}
+.resultTitle .highlight.green { background-color: var(--primary-color); color: var(--primary-color-text); }
+.affinitiesContainer li.green { background-color: var(--primary-color-light); color: #1B5E20; /* Dark text on light green */ }
+
+/* Gold Theme (using Amber/Gold) */
+.gold {
+  --primary-color: #FFCA28; /* Amber */
+  --primary-color-light: #FFE082; /* Lighter Amber */
+  --primary-color-text: #4E342E; /* Dark Brown text for better contrast on Amber */
+  --primary-color-dark: #FFA000; /* Darker Amber */
+  --primary-color-pfp-border: #FFCA28;
+}
+.resultTitle .highlight.gold { background-color: var(--primary-color); color: var(--primary-color-text); }
+.affinitiesContainer li.gold { background-color: var(--primary-color-light); color: #E65100; /* Dark orange/brown text on light gold */ }
+
+
+/* Media Query for Responsiveness */
 @media (max-width: 600px) {
     .container {
-        padding-left: 0.75rem; /* Reduce horizontal padding */
-        padding-right: 0.75rem;
-        gap: 1rem; /* Reduce gap slightly */
+        padding-left: 15px; 
+        padding-right: 15px;
+        gap: 1rem; 
     }
 
     .headerContainer {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-        gap: 0.75rem;
+        padding-left: 5px;
+        padding-right: 5px;
+        gap: 10px;
+        flex-direction: column; /* Stack PFP and title on small screens */
+        align-items: center;
+        text-align: center;
+    }
+    
+    .pfpContainerSmall {
+      margin-right: 0;
+      margin-bottom: 10px;
     }
 
     .titleSmall {
-        font-size: 1.2rem; /* Slightly smaller title on mobile */
+        font-size: 1.25em; 
+    }
+    
+    .resultTitle {
+        font-size: 1.5em;
     }
 
     .resultsContainer {
-        padding: 1rem; /* Reduce padding inside results box */
+        padding: 15px; 
     }
 
     .detailsGrid {
-        grid-template-columns: 1fr; /* Ensure single column */
-        gap: 1.5rem;
+        gap: 20px; /* Adjust gap for stacked cards */
     }
 
-    .percentagesContainer h3,
-    .evidenceContainer h3,
-    .whyNotContainer h3 {
-        font-size: 1rem; /* Smaller section titles */
+    .stereotypesContainer h3,
+    .affinitiesContainer h3 {
+        font-size: 1.15em; 
     }
 
     .shareButton {
-        padding: 0.7rem 1.2rem;
-        font-size: 0.95rem;
+        padding: 9px 16px;
+        font-size: 0.95em;
+        width: 100%; /* Make share button full width on mobile */
+        justify-content: center;
     }
+
+    .stereotypesContainer li {
+      padding-left: 20px;
+    }
+    .stereotypesContainer li::before {
+      font-size: 1em;
+    }
+}
+
+/* Remove old Hogwarts styles if they were present */
+/*
+.gryffindor, .slytherin, .hufflepuff, .ravenclaw {
+  /* Styles removed to prevent conflict */
+/* }
+*/
+/* .pfpImage.gryffindor, .pfpImage.slytherin, .pfpImage.hufflepuff, .pfpImage.ravenclaw { */
+  /* Styles removed */
+/* } */
+/* .highlight.gryffindor, .highlight.slytherin, .highlight.hufflepuff, .highlight.ravenclaw { */
+  /* Styles removed */
+/* } */
+
+/* Ensure these specific classes for affinity items correctly pick up their unique background/text colors */
+.affinitiesContainer li.orange,
+.affinitiesContainer li.blue,
+.affinitiesContainer li.green,
+.affinitiesContainer li.gold {
+  /* These are already defined within their respective theme blocks, */
+  /* e.g., .affinitiesContainer li.orange { background-color: var(--primary-color-light); color: #BF360C; } */
+  /* This empty block is just a reminder of their specificity, no new rules needed here unless overrides are intended. */
 } 

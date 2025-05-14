@@ -5,20 +5,20 @@ import Image from 'next/image';
 import styles from './HomeComponent.module.css';
 import { shareCastIntent } from '@/lib/frame';
 
-// Helper function to get house colors (adjust as needed)
-const getHouseStyle = (houseName) => {
-  switch (houseName?.toLowerCase()) {
-    case 'gryffindor': return styles.gryffindor;
-    case 'slytherin': return styles.slytherin;
-    case 'hufflepuff': return styles.hufflepuff;
-    case 'ravenclaw': return styles.ravenclaw;
+// Helper function to get color styles (updated for True Colors)
+const getColorStyle = (colorName) => {
+  switch (colorName?.toLowerCase()) {
+    case 'orange': return styles.orange;
+    case 'blue': return styles.blue;
+    case 'green': return styles.green;
+    case 'gold': return styles.gold;
     default: return '';
   }
 };
 
 export function HomeComponent() {
   const [userData, setUserData] = useState(null);
-  const [hogwartsData, setHogwartsData] = useState(null);
+  const [trueColorsData, setTrueColorsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fid, setFid] = useState(null);
@@ -64,7 +64,7 @@ export function HomeComponent() {
     setIsLoading(true);
     setError(null);
     setUserData(null);
-    setHogwartsData(null);
+    setTrueColorsData(null);
     setShareStatus('');
     fetch(`/api/user?fid=${fid}`)
       .then(async res => {
@@ -77,9 +77,9 @@ export function HomeComponent() {
       })
       .then(data => {
         // console.log("HomeComponent received analysis data:", data);
-        if (!data.hogwarts) throw new Error("Missing Hogwarts analysis.");
+        if (!data.trueColors) throw new Error("Missing True Colors analysis.");
         setUserData({ username: data.username, pfp_url: data.pfp_url, display_name: data.display_name });
-        setHogwartsData(data.hogwarts);
+        setTrueColorsData(data.trueColors);
         setIsLoading(false); 
       })
       .catch(err => {
@@ -90,8 +90,8 @@ export function HomeComponent() {
   }, [fid]);
 
   const handleShareClick = useCallback(async () => {
-    if (!hogwartsData || !fid || !userData) {
-      // console.error('Missing data for sharing:', { hogwartsData, fid, userData });
+    if (!trueColorsData || !fid || !userData) {
+      // console.error('Missing data for sharing:', { trueColorsData, fid, userData });
       setShareStatus('Error: Missing data');
       setTimeout(() => setShareStatus(''), 3000);
       return;
@@ -106,7 +106,7 @@ export function HomeComponent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          house: hogwartsData.primaryHouse,
+          color: trueColorsData.primaryColor,
           displayName: userData.display_name || userData.username || `FID ${fid}`,
           pfpUrl: userData.pfp_url || '',
           fid: fid,
@@ -130,7 +130,7 @@ export function HomeComponent() {
         throw new Error('Shareable Page URL not received from API.');
       }
 
-      const castText = `I'm a ${hogwartsData.primaryHouse}! What house are you?`;
+      const castText = `My True Color is ${trueColorsData.primaryColor}! What's yours?`;
       
       await shareCastIntent(castText, shareablePageUrl);
       
@@ -142,11 +142,11 @@ export function HomeComponent() {
     } finally {
       setTimeout(() => setShareStatus(''), 5000); 
     }
-  }, [hogwartsData, userData, fid]);
+  }, [trueColorsData, userData, fid]);
 
-  const primaryHouse = hogwartsData?.primaryHouse;
-  const houseStyle = getHouseStyle(primaryHouse);
-  const otherHouses = hogwartsData?.counterArguments ? Object.keys(hogwartsData.counterArguments) : [];
+  const primaryColor = trueColorsData?.primaryColor;
+  const colorStyle = getColorStyle(primaryColor);
+  const primaryColorName = primaryColor?.toLowerCase();
 
   // Loading State UI (Show if fid is not set yet OR if isLoading is true during fetch)
   if (!fid || isLoading) {
@@ -154,7 +154,7 @@ export function HomeComponent() {
             <div className={`${styles.container} ${styles.loadingContainer}`}>
                 <div className={styles.spinner}></div>
                 {/* Adjust text based on whether we are waiting for FID or fetching data */} 
-                <p className={styles.loadingText}>{!fid ? "Waiting for frame context..." : "Consulting the Sorting Hat..."}</p>
+                <p className={styles.loadingText}>{!fid ? "Waiting for frame context..." : "Discovering your True Color..."}</p>
             </div>
         );
   }
@@ -163,7 +163,7 @@ export function HomeComponent() {
   if (error) {
         return (
             <div className={styles.container}>
-                 <h2 className={styles.errorTitle}>Sorting Hat Malfunction!</h2>
+                 <h2 className={styles.errorTitle}>Color Analysis Failed!</h2>
                 <p className={styles.errorMessage}>{error}</p>
             </div>
         );
@@ -171,29 +171,29 @@ export function HomeComponent() {
 
   // Main Content UI (Only render if fid is set, not loading, and no error)
   return (
-    <div className={styles.container}>
-      {/* Simplified Header */} 
+    <div className={`${styles.container} ${primaryColorName ? styles[primaryColorName] : ''}`}>
+      {/* Header Container */}
       <div className={styles.headerContainer}>
         {userData && userData.pfp_url && (
             <div className={styles.pfpContainerSmall}>
               <Image
                 src={userData.pfp_url}
                 alt={`${userData.display_name || userData.username || 'User'}'s profile picture`}
-                width={50} // Smaller PFP
+                width={50}
                 height={50}
-                className={`${styles.pfpImageSmall} ${houseStyle}`}
+                className={`${styles.pfpImageSmall} ${colorStyle}`}
                 priority
                 unoptimized={true}
               />
             </div>
         )}
          <h1 className={styles.titleSmall}>
-            Sorting complete for <span className={styles.userNameHighlight}>{userData?.display_name || userData?.username || `FID ${fid}` }</span>!
+            Color analysis complete for <span className={`${styles.userNameHighlight}`}>{userData?.display_name || userData?.username || `FID ${fid}` }</span>!
         </h1>
       </div>
 
-      {/* Share Button - MOVED HERE */} 
-      {hogwartsData && (
+      {/* Share Button */}
+      {trueColorsData && (
         <button
             className={styles.shareButton}
             onClick={handleShareClick}
@@ -205,59 +205,55 @@ export function HomeComponent() {
         </button>
        )}
 
-      {/* Results Container */} 
-      {hogwartsData && (
+      {/* Results Container */}
+      {trueColorsData && (
           <div className={styles.resultsContainer}>
-            <h2 className={styles.resultTitle}>The Sorting Hat says... <span className={`${styles.highlight} ${houseStyle}`}>{primaryHouse}!</span></h2>
-            {hogwartsData.summary && <p className={styles.summary}>{hogwartsData.summary}</p>}
+            <h2 className={styles.resultTitle}>Your True Color is... <span className={`${styles.highlight} ${colorStyle}`}>{primaryColor}!</span></h2>
+            {trueColorsData.summary && <p className={styles.summary}>{trueColorsData.summary}</p>}
             
-            {/* Details Grid - REORDERED */} 
             <div className={styles.detailsGrid}>
-                {/* Key Traits & Evidence (Now First) */} 
-                {hogwartsData.evidence && hogwartsData.evidence.length > 0 && (
-                  <div className={styles.evidenceContainer}>
-                    <h3>Key Traits & Evidence</h3>
-                    {hogwartsData.evidence.map((item, index) => (
-                      <div key={index} className={styles.evidenceItem}>
-                        <h4 className={styles.traitTitle}>{item.trait}</h4>
-                        <blockquote>
-                          {item.quotes.map((quote, qIndex) => (
-                            <p key={qIndex}>"{quote}"</p>
-                          ))}
-                        </blockquote>
-                        <p className={styles.explanation}>{item.explanation}</p>
-                      </div>
-                    ))}
+                {/* Positive Stereotypes */}
+                {trueColorsData.positiveStereotypes && trueColorsData.positiveStereotypes.length > 0 && (
+                  <div className={styles.stereotypesContainer}>
+                    <h3>Positive Traits</h3>
+                    <ul>
+                      {trueColorsData.positiveStereotypes.map((item, index) => (
+                        <li key={index}>
+                          <strong>{item.trait}:</strong> {item.evidence}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
-                {/* House Affinity (Now Second) */} 
-                {hogwartsData.housePercentages && (
-                  <div className={styles.percentagesContainer}>
-                    <h3>House Affinity</h3>
+                {/* Negative Stereotypes */}
+                {trueColorsData.negativeStereotypes && trueColorsData.negativeStereotypes.length > 0 && (
+                  <div className={styles.stereotypesContainer}>
+                    <h3>Potential Challenges</h3>
                     <ul>
-                      {Object.entries(hogwartsData.housePercentages)
-                        .sort(([, a], [, b]) => b - a)
-                        .map(([house, percentage]) => (
-                          <li key={house} className={getHouseStyle(house)}>
-                             {house}: {Math.round(percentage)}%
+                      {trueColorsData.negativeStereotypes.map((item, index) => (
+                        <li key={index}>
+                          <strong>{item.trait}:</strong> {item.evidence}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                 {/* Color Affinities */}
+                {trueColorsData.colorAffinities && (
+                  <div className={styles.affinitiesContainer}>
+                    <h3>Color Affinities</h3>
+                    <ul>
+                      {Object.entries(trueColorsData.colorAffinities)
+                        .sort(([, a], [, b]) => b - a) 
+                        .map(([color, percentage]) => (
+                          <li key={color} className={getColorStyle(color)}>
+                             {color}: {Math.round(percentage)}%
                           </li>
                         ))}
                     </ul>
                   </div>
                 )}
             </div>
-
-             {/* Why Not Section */} 
-             {otherHouses.length > 0 && (
-                <div className={styles.whyNotContainer}>
-                    <h3>Why Not Other Houses?</h3>
-                    {otherHouses.map(house => (
-                        <div key={house} className={styles.whyNotItem}>
-                            <strong className={getHouseStyle(house)}>{house}:</strong> {hogwartsData.counterArguments[house]}
-                        </div>
-                    ))}
-                </div>
-             )}
           </div>
       )}
     </div>

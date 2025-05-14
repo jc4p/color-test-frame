@@ -8,209 +8,207 @@ if (!GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || '');
 
-// Define the schema for the Hogwarts House analysis
-const hogwartsSchema = {
+// Define the schema for the True Colors analysis
+const trueColorsSchema = {
   type: SchemaType.OBJECT,
   properties: {
-    primaryHouse: {
+    primaryColor: {
       type: SchemaType.STRING,
-      description: "The Hogwarts house that best represents the user based on their traits.",
-      enum: ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"],
+      description: "The True Color that best represents the user based on their personality traits.",
+      enum: ["Orange", "Blue", "Green", "Gold"],
     },
-    housePercentages: {
+    colorAffinities: {
       type: SchemaType.OBJECT,
-      description: "An estimated percentage affinity for each Hogwarts house (0-100). These represent affinity and do not need to sum to 100.",
+      description: "An estimated percentage affinity for each True Color (0-100). These represent affinity and do not need to sum to 100.",
       properties: {
-        Gryffindor: { type: SchemaType.NUMBER, description: "Percentage affinity for Gryffindor (bravery, daring)." },
-        Slytherin: { type: SchemaType.NUMBER, description: "Percentage affinity for Slytherin (ambition, cunning)." },
-        Hufflepuff: { type: SchemaType.NUMBER, description: "Percentage affinity for Hufflepuff (loyalty, hard work)." },
-        Ravenclaw: { type: SchemaType.NUMBER, description: "Percentage affinity for Ravenclaw (wit, learning)." },
+        Orange: { type: SchemaType.NUMBER, description: "Percentage affinity for Orange (action-oriented, spontaneous)." },
+        Blue: { type: SchemaType.NUMBER, description: "Percentage affinity for Blue (relationship-oriented, empathetic)." },
+        Green: { type: SchemaType.NUMBER, description: "Percentage affinity for Green (intellectual, analytical)." },
+        Gold: { type: SchemaType.NUMBER, description: "Percentage affinity for Gold (organized, responsible)." },
       },
-      required: ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"],
+      required: ["Orange", "Blue", "Green", "Gold"],
     },
     summary: {
         type: SchemaType.STRING,
-        description: "A brief (2-3 sentence) summary explaining the primary house choice and key traits observed, written directly to the user ('You seem most like a... because...').",
-        maxLength: 300,
+        description: "A brief (2-3 sentence) summary explaining the primary color choice and key traits observed, written directly to the user ('Your True Color appears to be... because you demonstrate...').",
+        maxLength: 350,
     },
-    evidence: {
+    positiveStereotypes: {
       type: SchemaType.ARRAY,
-      description: "Exactly 3 pieces of evidence supporting the house analysis. Each piece should link a trait to specific examples.",
+      description: "3-5 common positive traits or stereotypes associated with the user's primary color, each with specific evidence from their casts/bio.",
       items: {
         type: SchemaType.OBJECT,
         properties: {
           trait: {
             type: SchemaType.STRING,
-            description: "The primary trait observed (e.g., 'Bravery', 'Ambition', 'Loyalty', 'Wit').",
-            maxLength: 50,
+            description: "The positive trait or stereotype observed.",
+            maxLength: 100,
           },
-          quotes: {
-            type: SchemaType.ARRAY,
-            description: "1-2 short, direct quotes (max 10 words each) from the user's casts demonstrating this trait.",
-            items: {
-              type: SchemaType.STRING,
-              description: "A short, direct quote (max 10 words).",
-              maxLength: 60, // ~10 words
-            },
-            minItems: 1,
-            maxItems: 2,
-          },
-          explanation: {
+          evidence: {
             type: SchemaType.STRING,
-            description: "One sentence explaining how these quotes demonstrate the specified trait, written directly to the user ('Your casts like ... show...').",
-            maxLength: 150,
-          },
+            description: "A brief explanation or a direct quote (max 20 words) from the user's casts/bio illustrating this trait. Example: 'Your cast about X shows this.' or 'Quote: \'USER_CAST_SNIPPET\'.",
+            maxLength: 250,
+          }
         },
-        required: ["trait", "quotes", "explanation"],
+        required: ["trait", "evidence"]
       },
       minItems: 3,
-      maxItems: 3,
+      maxItems: 5,
     },
-    counterArguments: {
+    negativeStereotypes: {
+      type: SchemaType.ARRAY,
+      description: "3-5 common negative traits, potential challenges, or areas for growth associated with the user's primary color, each with specific evidence from their casts/bio.",
+      items: {
         type: SchemaType.OBJECT,
-        description: "Brief explanations (1-2 sentences each) for why the user doesn\'t primarily belong to the *other* three houses, written directly to the user. Keys should be the house names.",
         properties: {
-            Gryffindor: { type: SchemaType.STRING, description: "Why not primarily Gryffindor? Focus on contrasting traits.", maxLength: 150 },
-            Slytherin: { type: SchemaType.STRING, description: "Why not primarily Slytherin? Focus on contrasting traits.", maxLength: 150 },
-            Hufflepuff: { type: SchemaType.STRING, description: "Why not primarily Hufflepuff? Focus on contrasting traits.", maxLength: 150 },
-            Ravenclaw: { type: SchemaType.STRING, description: "Why not primarily Ravenclaw? Focus on contrasting traits.", maxLength: 150 },
+          trait: {
+            type: SchemaType.STRING,
+            description: "The negative trait, potential challenge, or area for growth observed.",
+            maxLength: 100,
+          },
+          evidence: {
+            type: SchemaType.STRING,
+            description: "A brief explanation or a direct quote (max 20 words) from the user's casts/bio illustrating this trait/challenge. Example: 'Your cast about Y suggests this.' or 'Quote: \'USER_CAST_SNIPPET\'.",
+            maxLength: 250,
+          }
         },
+        required: ["trait", "evidence"]
+      },
+      minItems: 3,
+      maxItems: 5,
     },
   },
-  required: ["primaryHouse", "housePercentages", "summary", "evidence", "counterArguments"],
+  required: ["primaryColor", "colorAffinities", "summary", "positiveStereotypes", "negativeStereotypes"],
 };
 
 /**
- * Analyzes a user's bio and casts to determine their Hogwarts House affinity.
+ * Analyzes a user's bio and casts to determine their True Colors personality affinity.
  * @param {string | null} bio - The user's Farcaster bio.
  * @param {string[]} casts - An array of the user's recent cast texts.
- * @returns {Promise<object | null>} The analysis result matching hogwartsSchema or null if an error occurs.
+ * @returns {Promise<object | null>} The analysis result matching trueColorsSchema or null if an error occurs.
  */
-export async function analyzeHogwartsHouse(bio, casts) {
+export async function analyzeTrueColors(bio, casts) {
   if (!GEMINI_API_KEY) {
     console.error("Cannot analyze: GEMINI_API_KEY is not set.");
     return null;
   }
   if (!casts || casts.length === 0) {
     console.warn("No casts provided for analysis.");
-    // Proceeding with bio only if available
-    if (!bio) return null;
+    if (!bio) {
+        console.error("No bio or casts provided for analysis.");
+        return null;
+    }
   }
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-lite",
+    model: "gemini-2.0-flash-lite", // Consider gemini-1.5-flash-latest or gemini-1.5-pro-latest if more power is needed
     generationConfig: {
       temperature: 0.7,
       topK: 40,
       topP: 0.9,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 2048, // Ensure this is enough for the schema
       responseMimeType: "application/json",
-      responseSchema: hogwartsSchema,
+      responseSchema: trueColorsSchema,
     },
   });
 
-  const prompt = `Analyze this Farcaster user's bio and recent casts to determine their Hogwarts House alignment, acting as the Sorting Hat. Assign a primary house and percentage affinities (0-100) for all four houses based on these traits:
+  const prompt = `Analyze this Farcaster user's bio and recent casts to determine their "True Colors" personality type. Assign a primary color and percentage affinities (0-100) for all four colors. Also, list common positive and negative stereotypes/traits for their primary color, providing specific evidence from their texts for each.
 
-*   **Gryffindor:** Bravery, daring, nerve, chivalry, boldness, speaking out, adventurousness.
-*   **Hufflepuff:** Hard work, dedication, patience, loyalty, fair play, kindness, modesty, community focus.
-*   **Ravenclaw:** Intelligence, learning, wisdom, wit, creativity, curiosity, logic, individuality.
-*   **Slytherin:** Ambition, cunning, leadership, resourcefulness, determination, self-preservation, strategic thinking.
+**True Colors Personality Types Overview:**
+*   **Orange:** Action-oriented, energetic, spontaneous, risk-taker, competitive, enjoys freedom, hands-on, lives in the present. Values skill and results.
+    *   *Positive traits often include:* Dynamic, skillful, adventurous, charming, fun-loving, witty, quick-thinking, bold.
+    *   *Potential challenges include:* Impatient, impulsive, may overlook rules/details, can be seen as irresponsible or flaky, may not finish tasks.
+*   **Blue:** Relationship-oriented, empathetic, communicative, seeks harmony and connection, authentic, artistic, compassionate. Values personal growth and meaning.
+    *   *Positive traits often include:* Caring, insightful, inspiring, cooperative, sincere, peacemaker, good listener, expressive.
+    *   *Potential challenges include:* Overly emotional, conflict-avoidant, can be taken advantage of, may struggle with difficult decisions, people-pleasing tendency.
+*   **Green:** Intellectual, analytical, independent, innovative, curious, seeks knowledge and competence, logical, visionary. Values logic and data.
+    *   *Positive traits often include:* Competent, original, rational, inventive, calm, self-controlled, objective, principled.
+    *   *Potential challenges include:* Can seem arrogant or aloof, socially reserved, overly critical (of self and others), unemotional, may procrastinate due to perfectionism.
+*   **Gold:** Organized, responsible, traditional, dependable, values rules and order, punctual, enjoys structure, dutiful. Values stability and community.
+    *   *Positive traits often include:* Stable, reliable, thorough, efficient, law-abiding, detail-oriented, loyal, hard-working.
+    *   *Potential challenges include:* Rigid, controlling, judgmental, resistant to change, can be bureaucratic, may lack spontaneity or creativity.
 
 **Input Data:**
 Bio: ${bio || 'No bio provided.'}
-Recent Casts (max ${casts.length > 50 ? 50 : casts.length}):
-${casts.slice(0, 50).join('\n---\n')} ${casts.length > 50 ? '\n[... additional casts truncated]' : ''}
+Recent Casts (max 500):
+${casts.slice(0, 500).join('\\n---\\n')} ${casts.length > 500 ? '\\n[... additional casts truncated]' : ''}
 
 **Analysis Instructions:**
-1.  **Percentages:** Estimate affinity for EACH house (0-100%). Do NOT need to sum to 100.
-2.  **Primary House:** Determine the single BEST fit.
-3.  **Summary (Sorting Hat Voice - First Person & Detailed):** Write a 2-4 sentence summary FROM THE PERSPECTIVE OF THE SORTING HAT, addressing the user directly with "You" and "Your". Start with deliberation (e.g., "Hmm, a complex one...", "Ah, yes..."), specifically mention 1-2 key traits *you observed* in *their* casts/bio that strongly point to the chosen house, and *then* declare the house placement (e.g., "With *your* clear ambition and resourcefulness in [... specific example area ...], there's only one place for you... [Primary House]!"). Ensure the explanation is woven into the Hat's declaration.
-4.  **Evidence:** Provide EXACTLY 3 pieces of evidence (trait, 1-2 short quotes max 10 words, 1 sentence explanation TO the user).
-5.  **Counter Arguments:** For the THREE houses that are *NOT* the primary house, provide a brief (1-2 sentence) explanation TO THE USER about why they don't fit *primarily* into that house, focusing on contrasting traits.
+1.  **Primary Color:** Determine the single BEST fit from Orange, Blue, Green, or Gold.
+2.  **Color Affinities:** Estimate affinity for EACH of the four colors (0-100%). These represent affinity and do NOT need to sum to 100.
+3.  **Summary:** Write a 2-3 sentence summary explaining the primary color choice, written directly TO THE USER. Show your evidence.").
+4.  **Positive Stereotypes (Personalized):** List 3-5 common positive traits associated with the determined primary color. For each trait, provide specific supporting evidence by either: 
+    a) Briefly explaining how the user's casts/bio demonstrate this trait.
+    b) Citing a short, relevant quote (max 20 words) from their casts/bio.
+5.  **Negative Stereotypes (Personalized & Constructive):** List 3-5 common negative traits or potential challenges associated with the determined primary color. For each, provide specific supporting evidence similarly by explaining or quoting from their casts/bio. Frame these constructively as areas for awareness or growth.
 
 **IMPORTANT FORMATTING & STYLE:**
-*   Adhere STRICTLY to the JSON schema.
-*   Write summary, explanations, and counter-arguments directly TO the user (use "You"/"Your"), *including within the Sorting Hat summary persona*.
-*   Be concise and specific.
-*   Base analysis only on provided text.
+*   Adhere STRICTLY to the JSON schema, especially for the structure of positive and negative stereotypes (array of objects, each with 'trait' and 'evidence' strings).
+*   Write the summary directly TO THE USER (use "You"/"Your").
+*   Base analysis only on provided text. Do not invent information.
+*   Ensure evidence for stereotypes is concise and directly linked to the user's provided text.
 
 Please provide the analysis in the specified JSON format.`;
 
-  console.log("Sending request to Gemini...");
+  // console.log("Sending True Colors request to Gemini...");
 
   try {
     const result = await model.generateContent(prompt);
     const response = result.response;
     const responseText = response.text();
 
-    console.log("Received Gemini response text.");
+    // console.log("Received Gemini True Colors response text.");
 
-    // Attempt to parse the JSON response
     try {
         const parsedResponse = JSON.parse(responseText);
-        console.log("Successfully parsed Gemini response.");
+        // console.log("Successfully parsed Gemini True Colors response.");
 
-        // Basic validation including new field
-        if (!parsedResponse.primaryHouse || !parsedResponse.housePercentages || !parsedResponse.evidence || parsedResponse.evidence.length !== 3 || !parsedResponse.counterArguments) {
-            console.error("Parsed Gemini response is missing required fields or has incorrect evidence/counterArgument count.", parsedResponse);
-            throw new Error("Invalid structure in Gemini response.");
+        // Basic validation
+        if (!parsedResponse.primaryColor || !parsedResponse.colorAffinities || !parsedResponse.summary || !parsedResponse.positiveStereotypes || !parsedResponse.negativeStereotypes) {
+            console.error("Parsed Gemini True Colors response is missing required fields.", parsedResponse);
+            throw new Error("Invalid structure in Gemini True Colors response.");
         }
-
-        // Filter counterArguments to remove the entry for the primary house
-        const primary = parsedResponse.primaryHouse;
-        const filteredCounters = {};
-        for (const house in parsedResponse.counterArguments) {
-            if (house !== primary && parsedResponse.counterArguments[house]) {
-                filteredCounters[house] = parsedResponse.counterArguments[house];
-            }
+        if (parsedResponse.positiveStereotypes.length < 3 || parsedResponse.positiveStereotypes.length > 5 || !parsedResponse.positiveStereotypes.every(item => item.trait && item.evidence)) {
+            console.warn("Parsed Gemini True Colors response has an unexpected number or structure of positive stereotypes.", parsedResponse.positiveStereotypes);
+            // Potentially throw an error if strict adherence is critical
         }
-        parsedResponse.counterArguments = filteredCounters;
-
-        // Check if we have 3 counter arguments now
-        if (Object.keys(parsedResponse.counterArguments).length !== 3) {
-             console.warn(`Expected 3 counter arguments after filtering, but got ${Object.keys(parsedResponse.counterArguments).length}. Primary: ${primary}`, parsedResponse.counterArguments);
-             // Proceeding anyway, but this might indicate a prompt/model issue
+        if (parsedResponse.negativeStereotypes.length < 3 || parsedResponse.negativeStereotypes.length > 5 || !parsedResponse.negativeStereotypes.every(item => item.trait && item.evidence)) {
+            console.warn("Parsed Gemini True Colors response has an unexpected number or structure of negative stereotypes.", parsedResponse.negativeStereotypes);
+            // Potentially throw an error if strict adherence is critical
         }
 
         return parsedResponse;
     } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        console.error('Raw Gemini response text:', responseText);
-        // Attempt to extract JSON from markdown ```json ... ``` block if present
-        const match = responseText.match(/```json\n(.*\n?)```/s);
+        console.error('JSON parse error (True Colors):', parseError);
+        console.error('Raw Gemini True Colors response text:', responseText);
+        const match = responseText.match(/```json\\n(.*\n?)```/s);
         if (match && match[1]) {
-            console.log("Attempting to parse extracted JSON from markdown.");
+            console.log("Attempting to parse extracted JSON (True Colors) from markdown.");
             try {
                 const parsedFallback = JSON.parse(match[1]);
-                 console.log("Successfully parsed extracted Gemini JSON.");
+                 console.log("Successfully parsed extracted Gemini True Colors JSON.");
                  // Re-validate
-                 if (!parsedFallback.primaryHouse || !parsedFallback.housePercentages || !parsedFallback.evidence || parsedFallback.evidence.length !== 3 || !parsedFallback.counterArguments) {
-                    console.error("Parsed fallback Gemini response is missing required fields or has incorrect evidence/counterArgument count.", parsedFallback);
-                    throw new Error("Invalid structure in fallback Gemini response.");
+                 if (!parsedFallback.primaryColor || !parsedFallback.colorAffinities || !parsedFallback.summary || !parsedFallback.positiveStereotypes || !parsedFallback.negativeStereotypes) {
+                    console.error("Parsed fallback Gemini True Colors response is missing required fields.", parsedFallback);
+                    throw new Error("Invalid structure in fallback Gemini True Colors response.");
                  }
-                 // Filter counterArguments here too
-                const primaryFallback = parsedFallback.primaryHouse;
-                const filteredCountersFallback = {};
-                for (const house in parsedFallback.counterArguments) {
-                    if (house !== primaryFallback && parsedFallback.counterArguments[house]) {
-                        filteredCountersFallback[house] = parsedFallback.counterArguments[house];
-                    }
-                }
-                parsedFallback.counterArguments = filteredCountersFallback;
-                if (Object.keys(parsedFallback.counterArguments).length !== 3) {
-                    console.warn(`Fallback: Expected 3 counter arguments after filtering, but got ${Object.keys(parsedFallback.counterArguments).length}. Primary: ${primaryFallback}`, parsedFallback.counterArguments);
-                }
+                 if (parsedFallback.positiveStereotypes.length < 3 || parsedFallback.positiveStereotypes.length > 5 || !parsedFallback.positiveStereotypes.every(item => item.trait && item.evidence)) {
+                    console.warn("Parsed fallback Gemini True Colors response has an unexpected number or structure of positive stereotypes.", parsedFallback.positiveStereotypes);
+                 }
+                 if (parsedFallback.negativeStereotypes.length < 3 || parsedFallback.negativeStereotypes.length > 5 || !parsedFallback.negativeStereotypes.every(item => item.trait && item.evidence)) {
+                    console.warn("Parsed fallback Gemini True Colors response has an unexpected number or structure of negative stereotypes.", parsedFallback.negativeStereotypes);
+                 }
                 return parsedFallback;
             } catch (fallbackParseError) {
-                console.error('Fallback JSON parse error:', fallbackParseError);
-                throw new Error("Failed to parse Gemini response as JSON, even after extraction.");
+                console.error('Fallback JSON parse error (True Colors):', fallbackParseError);
+                throw new Error("Failed to parse Gemini True Colors response as JSON, even after extraction.");
             }
         } else {
-             throw new Error("Failed to parse Gemini response as JSON.");
+             throw new Error("Failed to parse Gemini True Colors response as JSON.");
         }
     }
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
+    console.error('Error calling Gemini API for True Colors analysis:', error);
     return null;
   }
 } 
