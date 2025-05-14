@@ -4,10 +4,10 @@ import { uploadToR2 } from '@/lib/r2';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { house, displayName, pfpUrl, fid } = body;
+    const { color, displayName, pfpUrl, fid } = body;
 
-    if (!house || !displayName || !fid) {
-      return NextResponse.json({ error: 'Missing required parameters: house, displayName, fid' }, { status: 400 });
+    if (!color || !displayName || !fid) {
+      return NextResponse.json({ error: 'Missing required parameters: color, displayName, fid' }, { status: 400 });
     }
 
     // Construct the URL for the OG image generator
@@ -17,7 +17,7 @@ export async function POST(request) {
     }
 
     const ogImageUrl = new URL(`${appUrl}/api/og`);
-    ogImageUrl.searchParams.set('house', house);
+    ogImageUrl.searchParams.set('color', color);
     ogImageUrl.searchParams.set('displayName', displayName);
     if (pfpUrl) {
       ogImageUrl.searchParams.set('pfpUrl', pfpUrl);

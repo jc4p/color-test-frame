@@ -147,6 +147,7 @@ ${casts.slice(0, 500).join('\\n---\\n')} ${casts.length > 500 ? '\\n[... additio
 *   Write the summary directly TO THE USER (use "You"/"Your").
 *   Base analysis only on provided text. Do not invent information.
 *   Ensure evidence for stereotypes is concise and directly linked to the user's provided text.
+*   If you discuss "on-chain" concepts always use "onchain" one word without the dash.
 
 Please provide the analysis in the specified JSON format.`;
 
