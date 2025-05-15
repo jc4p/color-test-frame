@@ -169,6 +169,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
   border: 1px solid #e0e0e0;
+  max-width: 80vw;
 }
 
 .stereotypesContainer h3,

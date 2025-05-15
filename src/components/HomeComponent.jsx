@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import styles from './HomeComponent.module.css';
-import { shareCastIntent } from '@/lib/frame';
+import { shareCastIntent, initiateMintProcess } from '@/lib/frame';
 
 // Helper function to get color styles (updated for True Colors)
 const getColorStyle = (colorName) => {
@@ -23,6 +23,7 @@ export function HomeComponent() {
   const [error, setError] = useState(null);
   const [fid, setFid] = useState(null);
   const [shareStatus, setShareStatus] = useState('');
+  const [mintStatus, setMintStatus] = useState('');
 
   // Effect to check for window.userFid
   useEffect(() => {
@@ -66,6 +67,7 @@ export function HomeComponent() {
     setUserData(null);
     setTrueColorsData(null);
     setShareStatus('');
+    setMintStatus('');
     fetch(`/api/user?fid=${fid}`)
       .then(async res => {
         if (!res.ok) {
@@ -144,6 +146,71 @@ export function HomeComponent() {
     }
   }, [trueColorsData, userData, fid]);
 
+  // New handler for minting
+  const handleMintClick = useCallback(async () => {
+    if (!trueColorsData || !fid || !userData) {
+      setMintStatus('Error: Missing data');
+      setTimeout(() => setMintStatus(''), 3000);
+      return;
+    }
+
+    setMintStatus('Minting NFT...');
+
+    try {
+      const apiResponse = await fetch('/api/mint-nft', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          color: trueColorsData.primaryColor,
+          displayName: userData.display_name || userData.username || `FID ${fid}`,
+          pfpUrl: userData.pfp_url || '',
+          fid: fid,
+        }),
+      });
+
+      if (!apiResponse.ok) {
+        const errorData = await apiResponse.json();
+        throw new Error(errorData.error || `Failed to mint NFT image (status: ${apiResponse.status})`);
+      }
+
+      const { mintedImageR2Url } = await apiResponse.json();
+
+      if (mintedImageR2Url) {
+        console.log('Minted NFT Image R2 URL:', mintedImageR2Url);
+        setMintStatus('Image ready, preparing transaction...');
+
+        // Call the new initiateMintProcess function from frame.js
+        const mintResult = await initiateMintProcess({
+            fid: fid,
+            username: userData?.username,
+            primaryColor: trueColorsData.primaryColor,
+            mintedImageR2Url: mintedImageR2Url
+        });
+
+        // console.log('Mint process result:', mintResult);
+
+        if (mintResult.success) {
+          setMintStatus('Thanks, check your wallet in a few minutes!');
+        } else {
+          // Error message will be from the error thrown by initiateMintProcess
+          throw new Error(mintResult.message || 'Minting process failed.');
+        }
+
+      } else {
+        throw new Error('Minted Image URL not received from API.');
+      }
+
+    } catch (err) {
+      console.error('Error in handleMintClick:', err); 
+      setMintStatus(`Mint failed: ${err.message.substring(0, 100)}`);
+    } finally {
+      // Consider when to clear status or if a retry should be allowed
+      // setTimeout(() => setMintStatus(''), 10000); // Longer timeout for final messages
+    }
+  }, [trueColorsData, userData, fid]);
+
   const primaryColor = trueColorsData?.primaryColor;
   const colorStyle = getColorStyle(primaryColor);
   const primaryColorName = primaryColor?.toLowerCase();
@@ -204,6 +271,19 @@ export function HomeComponent() {
             {shareStatus || 'Share Result'}
         </button>
        )}
+
+      {/* Mint NFT Image Button - New Button */}
+      {trueColorsData && (
+        <button
+            className={`${styles.shareButton} ${styles.mintButton}`}
+            onClick={handleMintClick}
+            disabled={!!mintStatus && mintStatus !== 'Mint Result'}
+            aria-label="Mint Result"
+        >
+            <span role="img" aria-label="sparkles icon">✨</span>
+            {mintStatus || 'Mint Result'}
+        </button>
+      )}
 
       {/* Results Container */}
       {trueColorsData && (

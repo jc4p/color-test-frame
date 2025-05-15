@@ -7,7 +7,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
 
     // Params from query string
-    const house = searchParams.get('house') || 'Your House';
+    const colorName = searchParams.get('color')?.toLowerCase() || 'unknown';
     const displayName = searchParams.get('displayName') || 'Anonymous User';
     const pfpUrl = searchParams.get('pfpUrl');
     // const fid = searchParams.get('fid'); // Not directly used in image text but good for context
@@ -25,6 +25,18 @@ export async function GET(request) {
       }
     }
 
+    const colorMap = {
+      orange: '#FF7043',
+      blue: '#42A5F5',
+      green: '#66BB6A',
+      gold: '#FFCA28',
+      unknown: '#808080', // Default gray for unknown color
+    };
+
+    const selectedColorHex = colorMap[colorName] || colorMap['unknown'];
+    const capitalizedColorName = colorName.charAt(0).toUpperCase() + colorName.slice(1);
+
+
     return new ImageResponse(
       (
         <div
@@ -34,71 +46,78 @@ export async function GET(request) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             backgroundColor: '#f0f0f0',
             fontFamily: '"Arial", sans-serif',
-            fontSize: 32,
-            color: 'black',
-            padding: '20px',
-            border: '20px solid #4A90E2'
+            padding: '20px 30px',
+            boxSizing: 'border-box',
           }}
         >
-          {/* Wrapper for conditional image/placeholder */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
+          {/* User Info Area */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '25px' }}>
             {validPfpUrl ? (
               <img
                 src={validPfpUrl}
-                alt="User PFP"
-                width={100}
-                height={100}
+                alt=""
+                width={80}
+                height={80}
                 style={{
                   borderRadius: '50%',
-                  border: '4px solid #4A90E2'
+                  marginRight: '20px',
+                  border: '4px solid #ccc'
                 }}
               />
             ) : (
               <div 
                 style={{ 
-                  width: 100, 
-                  height: 100, 
+                  width: 80, 
+                  height: 80, 
                   borderRadius: '50%', 
-                  backgroundColor: '#ccc', 
-                  border: '4px solid #4A90E2' 
+                  backgroundColor: '#ccc',
+                  marginRight: '20px',
+                  border: '4px solid #ccc'
                 }}
               />
             )}
+            <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#333' }}>
+              {displayName}
+            </div>
           </div>
           
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            textAlign: 'center',
-            marginBottom: '15px',
-            fontSize: '40px',
-            fontWeight: 'bold',
-            color: '#333'
-          }}>{displayName}</div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            textAlign: 'center',
-            fontSize: '50px',
-            fontWeight: 'bold',
-            color: '#D95F24',
-            marginBottom: '20px'
-          }}>
-            I'm a {house}!
+          {/* Color Circle and Name */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+            <div
+              style={{
+                width: '150px',
+                height: '150px',
+                backgroundColor: selectedColorHex,
+                borderRadius: '50%',
+                marginBottom: '5px',
+                border: '5px solid rgba(0,0,0,0.1)',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              }}
+            />
+            <div style={{
+              fontSize: '40px',
+              fontWeight: 'bold',
+              color: selectedColorHex,
+              textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
+            }}>
+              I'm {capitalizedColorName}!
+            </div>
           </div>
-
+          
+          {/* Find out yours! text */}
           <div style={{
             display: 'flex',
-            justifyContent: 'center',
-            textAlign: 'center',
             fontSize: '28px',
             color: '#555',
-            marginTop: 'auto'
+            textAlign: 'center',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}>
-            Find out your type now!
+            Discover your color!
           </div>
         </div>
       ),
