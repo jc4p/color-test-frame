@@ -36,7 +36,7 @@ export async function POST(request) {
     // Upload to R2
     const timestamp = Date.now();
     const imageName = `share-image-${fid}-${timestamp}.png`;
-    const r2FileName = `what-x-are-you/${imageName}`;
+    const r2FileName = `true-colors-test/${imageName}`;
     
     const publicR2Url = await uploadToR2(Buffer.from(imageBuffer), r2FileName, 'image/png');
 

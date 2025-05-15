@@ -5,9 +5,9 @@ import { HomeComponent } from '@/components/HomeComponent';
 export async function generateMetadata({ searchParams }) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const r2PublicUrl = process.env.R2_PUBLIC_URL;
-  const R2_FOLDER_PREFIX = 'what-x-are-you/'; // Define the folder prefix
+  const R2_FOLDER_PREFIX = 'true-colors-test/';
 
-  let dynamicImageUrl = "https://placehold.co/600x400/orange/white/png?text=Preview+Image"; // Default
+  let dynamicImageUrl = "https://cover-art.kasra.codes/true_color_rectangle.png";
   
   const shareImageFileNameOnly = (await searchParams).image; 
 
@@ -22,41 +22,41 @@ export async function generateMetadata({ searchParams }) {
   }
 
   return {
-    title: 'My Page',
-    description: 'Description of my page',
+    title: 'True Colors',
+    description: 'Discover your True Colors personality type with True Colors.',
     other: {
       'fc:frame': JSON.stringify({
-        version: "next", // Exactly as requested
-        imageUrl: dynamicImageUrl, // Dynamically set image URL
+        version: "next",
+        imageUrl: dynamicImageUrl,
         button: {
-          title: "Try now!", // Exactly as requested
+          title: "Find Your Color!",
           action: {
-            type: "launch_frame", // Exactly as requested
-            name: "your-frame-name", // Placeholder - PLEASE UPDATE THIS
-            url: appUrl, // Uses the defined appUrl (NEXT_PUBLIC_APP_URL or default)
-            splashImageUrl: "https://placehold.co/200x200/blue/white/png?text=Splash+Image", // Placeholder - PLEASE UPDATE
-            splashBackgroundColor: "#ffffff" // Placeholder - PLEASE UPDATE
+            type: "launch_frame",
+            name: "true-color-test",
+            url: appUrl,
+            splashImageUrl: "https://cover-art.kasra.codes/true_color_icon.png",
+            splashBackgroundColor: "#ffffff"
           }
         }
       })
     },
     openGraph: {
-      title: 'My Page - Check out my result!',
-      description: 'I found out my result, check it out!',
+      title: 'True Colors',
+      description: 'Discover your True Colors personality type with True Colors.',
       images: [
         {
-          url: dynamicImageUrl, // OG image also uses the dynamic image
+          url: dynamicImageUrl,
           width: 600,
           height: 400,
-          alt: 'My result image',
+          alt: 'True Colors',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'My Page - Check out my result!',
-      description: 'I found out my result, check it out!',
-      images: [dynamicImageUrl], // Twitter image also uses the dynamic image
+      title: 'True Colors',
+      description: 'Discover your True Colors personality type with True Colors.',
+      images: [dynamicImageUrl],
     },
   };
 }
