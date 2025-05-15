@@ -1,0 +1,17 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjk3NzIzMywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweGE2N0JhMDI4MTIzMWVCOUUyZWE0Y0Y5Nzg5NGMwYjBiNUI4MDFDYzYifQ",
+    "payload": "eyJkb21haW4iOiJjb2xvci10ZXN0Lmthc3JhLmNvZGVzIn0",
+    "signature": "MHg0OWE3ZDFiMDQxN2NlNmYzZmZhMmQ4Mzg3MTY3MTBiMGMzMDc5YTlmNWFkMGI1OWRkZDhhZjEyNjg3MzhhOTE4MWE1NTZjYzY1YmJjODRhMmE1OWQ1MWFkNjRjNjU2ZjM0YzczNDQ5YzQwZDRiMDNlNzIyNWRlMmE0MDBiNWFkNTFi"
+  },
+  "frame": {
+    "version": "1",
+    "name": "True Colors",
+    "iconUrl": "https://cover-art.kasra.codes/true_color_icon.png",
+    "homeUrl": "https://color-test.kasra.codes",
+    "imageUrl": "https://cover-art.kasra.codes/true_color_rectangle.png",
+    "buttonTitle": "Discover Your Color!",
+    "splashImageUrl": "https://cover-art.kasra.codes/true_color_icon.png",
+    "splashBackgroundColor": "#ffffff"
+  }
+}

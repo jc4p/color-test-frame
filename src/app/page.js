@@ -29,7 +29,7 @@ export async function generateMetadata({ searchParams }) {
         version: "next",
         imageUrl: dynamicImageUrl,
         button: {
-          title: "Find Your Color!",
+          title: "Discover Your Color!",
           action: {
             type: "launch_frame",
             name: "true-color-test",
