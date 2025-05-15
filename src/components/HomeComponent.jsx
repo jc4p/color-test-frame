@@ -154,7 +154,7 @@ export function HomeComponent() {
       return;
     }
 
-    setMintStatus('Minting NFT...');
+    setMintStatus('Generating NFT...');
 
     try {
       const apiResponse = await fetch('/api/mint-nft', {
