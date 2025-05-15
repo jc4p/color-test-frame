@@ -24,6 +24,7 @@ export function HomeComponent() {
   const [fid, setFid] = useState(null);
   const [shareStatus, setShareStatus] = useState('');
   const [mintStatus, setMintStatus] = useState('');
+  const [hasSuccessfullyMinted, setHasSuccessfullyMinted] = useState(false);
 
   // Effect to check for window.userFid
   useEffect(() => {
@@ -68,6 +69,7 @@ export function HomeComponent() {
     setTrueColorsData(null);
     setShareStatus('');
     setMintStatus('');
+    setHasSuccessfullyMinted(false);
     fetch(`/api/user?fid=${fid}`)
       .then(async res => {
         if (!res.ok) {
@@ -132,7 +134,12 @@ export function HomeComponent() {
         throw new Error('Shareable Page URL not received from API.');
       }
 
-      const castText = `My True Color is ${trueColorsData.primaryColor}! What's yours?`;
+      let castText;
+      if (hasSuccessfullyMinted) {
+        castText = `I'm ${trueColorsData.primaryColor} and I just minted an NFT on Celo to prove it! What's your True Color?`;
+      } else {
+        castText = `My True Color is ${trueColorsData.primaryColor}! What's yours?`;
+      }
       
       await shareCastIntent(castText, shareablePageUrl);
       
@@ -144,7 +151,7 @@ export function HomeComponent() {
     } finally {
       setTimeout(() => setShareStatus(''), 5000); 
     }
-  }, [trueColorsData, userData, fid]);
+  }, [trueColorsData, userData, fid, hasSuccessfullyMinted]);
 
   // New handler for minting
   const handleMintClick = useCallback(async () => {
@@ -194,6 +201,7 @@ export function HomeComponent() {
 
         if (mintResult.success) {
           setMintStatus('Thanks, check your wallet in a few minutes!');
+          setHasSuccessfullyMinted(true);
         } else {
           // Error message will be from the error thrown by initiateMintProcess
           throw new Error(mintResult.message || 'Minting process failed.');
@@ -275,15 +283,21 @@ export function HomeComponent() {
 
       {/* Mint NFT Image Button - New Button */}
       {trueColorsData && (
-        <button
-            className={`${styles.shareButton} ${styles.mintButton}`}
-            onClick={handleMintClick}
-            disabled={!!mintStatus && mintStatus !== 'Mint Result'}
-            aria-label="Mint Result"
-        >
-            <span role="img" aria-label="sparkles icon">✨</span>
-            {mintStatus || 'Mint Result'}
-        </button>
+        <>
+          <button
+              className={`${styles.shareButton} ${styles.mintButton}`}
+              onClick={handleMintClick}
+              disabled={!!mintStatus && mintStatus !== 'Mint Result'}
+              aria-label="Mint Result"
+          >
+              <span role="img" aria-label="sparkles icon">✨</span>
+              {mintStatus || 'Mint Result'}
+          </button>
+          {/* Text label for Celo network */}
+          <div style={{ fontSize: '0.8em', color: '#555', textAlign: 'center', marginTop: '-5px', marginBottom: '15px' }}>
+            Mints on Celo network
+          </div>
+        </>
       )}
 
       {/* Results Container */}

@@ -70,6 +70,9 @@ export async function GET(request) {
             ) : (
               <div 
                 style={{ 
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                   width: 80, 
                   height: 80, 
                   borderRadius: '50%', 
@@ -79,7 +82,7 @@ export async function GET(request) {
                 }}
               />
             )}
-            <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#333' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', fontSize: '28px', fontWeight: 'bold', color: '#333' }}>
               {displayName}
             </div>
           </div>
@@ -88,6 +91,9 @@ export async function GET(request) {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
             <div
               style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 width: '150px',
                 height: '150px',
                 backgroundColor: selectedColorHex,
@@ -98,6 +104,9 @@ export async function GET(request) {
               }}
             />
             <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
               fontSize: '40px',
               fontWeight: 'bold',
               color: selectedColorHex,
@@ -112,7 +121,6 @@ export async function GET(request) {
             display: 'flex',
             fontSize: '28px',
             color: '#555',
-            textAlign: 'center',
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center'

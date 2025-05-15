@@ -313,6 +313,7 @@
 
     .resultsContainer {
         padding: 15px; 
+        padding-top: 0;
     }
 
     .detailsGrid {
@@ -360,4 +361,15 @@
   /* These are already defined within their respective theme blocks, */
   /* e.g., .affinitiesContainer li.orange { background-color: var(--primary-color-light); color: #BF360C; } */
   /* This empty block is just a reminder of their specificity, no new rules needed here unless overrides are intended. */
+}
+
+/* Mint Button Specific Styles */
+.mintButton {
+  background-color: #9b59b6; /* Purple for minting */
+  margin-bottom: 10px; /* Reduced bottom margin compared to shareButton */
+}
+
+.mintButton:hover:not(:disabled) {
+  background-color: #8e44ad; /* Darker purple for hover */
+  /* transform: translateY(-1px); Already inherited from shareButton if needed */
 } 
