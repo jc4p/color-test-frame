@@ -108,6 +108,7 @@ async function mintTokenAndRecordTransaction(mintData) {
     username,
     color,
     imageUrl,
+    updateStatus,
   } = mintData;
 
   if (!NEXT_PUBLIC_CONTRACT_ADDRESS) {
@@ -134,6 +135,11 @@ async function mintTokenAndRecordTransaction(mintData) {
 
     if (!txHash || typeof txHash !== 'string' || !txHash.startsWith('0x')) {
       throw new Error('Failed to send transaction or invalid transaction hash received.');
+    }
+
+    // Update status before calling the backend for polling
+    if (updateStatus) {
+      updateStatus("Waiting for confirmation...");
     }
 
     // Now call the backend to record this transaction and poll for token ID
@@ -175,7 +181,7 @@ async function mintTokenAndRecordTransaction(mintData) {
 }
 
 export async function initiateMintProcess(dataForMinting) {
-  const { fid, username, primaryColor, mintedImageR2Url } = dataForMinting;
+  const { fid, username, primaryColor, mintedImageR2Url, updateStatus } = dataForMinting;
 
   if (!frame.sdk || !frame.sdk.wallet || !frame.sdk.wallet.ethProvider) {
     throw new Error('Farcaster wallet provider is not available for minting.');
@@ -202,6 +208,7 @@ export async function initiateMintProcess(dataForMinting) {
         username,
         color: primaryColor,
         imageUrl: mintedImageR2Url,
+        updateStatus,
     };
 
     // console.log('Step 3: Calling mintTokenAndRecordTransaction with data:', mintData);

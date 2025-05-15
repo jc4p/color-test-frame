@@ -186,7 +186,8 @@ export function HomeComponent() {
             fid: fid,
             username: userData?.username,
             primaryColor: trueColorsData.primaryColor,
-            mintedImageR2Url: mintedImageR2Url
+            mintedImageR2Url: mintedImageR2Url,
+            updateStatus: setMintStatus
         });
 
         // console.log('Mint process result:', mintResult);
